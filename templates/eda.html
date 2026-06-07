@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Cyber Threat Analyzer - Exploratory Data Analysis{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="section-title">Exploratory Data Analysis</h1>
+    <p class="section-desc">Visual insights and distributions of key attributes extracted during model exploration.</p>
+</div>
+
+<div class="card-grid" style="grid-template-columns: 1.1fr 0.9fr;">
+    <div class="card">
+        <h3 class="card-title">1. Class Balance (Attack vs Normal)</h3>
+        <div class="visual-container">
+            <img src="{{ url_for('static', filename='images/class_distribution.png') }}" class="visual-image" alt="Class Distribution">
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            <strong>Insights:</strong> Out of 9,537 total sessions, <strong>{{ metadata.dataset.normal_count }} (55.3%)</strong> are classified as normal, while <strong>{{ metadata.dataset.attack_count }} (44.7%)</strong> represent cyber attacks/intrusions. This relatively balanced dataset ensures that our models learn features of both normal and attack behaviors without major class bias.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">2. IP Reputation vs Intrusion</h3>
+        <div class="visual-container">
+            <img src="{{ url_for('static', filename='images/ip_reputation_boxplot.png') }}" class="visual-image" alt="IP Reputation Boxplot">
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            <strong>Insights:</strong> Normal sessions correlate strongly with higher IP reputation scores (median around 0.8), while detected attacks exhibit significantly lower IP reputation scores (median below 0.35). This indicates that IP reputation is a highly discriminative indicator of malicious activity.
+        </p>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 40px;">
+    <h3 class="card-title">3. Feature Correlation Matrix</h3>
+    <div class="visual-container" style="background: rgba(15, 23, 42, 0.2);">
+        <img src="{{ url_for('static', filename='images/correlation_heatmap.png') }}" class="visual-image" alt="Correlation Heatmap" style="max-height: 480px; width: auto;">
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+        <strong>Insights:</strong> 
+        - The correlation matrix shows a strong positive correlation between `failed_logins`, `login_attempts`, and the target label `attack_detected`.
+        - Engineered features like `login_risk_score` (attempts &times; failed) show powerful correlation alignment with malicious sessions.
+        - Categorical variables (such as protocol and browser types) exhibit low correlation values, suggesting their relationship is non-linear and better captured by decision trees or ensemble algorithms like Random Forest.
+    </p>
+</div>
+
+<div class="card" style="margin-bottom: 40px;">
+    <h3 class="card-title">4. Packet Size & Session Duration Distributions</h3>
+    <div class="visual-container">
+        <img src="{{ url_for('static', filename='images/feature_distributions.png') }}" class="visual-image" alt="Feature Distributions">
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+        <strong>Insights:</strong>
+        - <strong>Session Duration:</strong> Cyber attacks (red) are frequently clustered in very short session intervals (less than 15 minutes), likely indicating rapid automated scanning or credential stuffing tools. Normal sessions (blue) display a wider, more uniform duration distribution.
+        - <strong>Network Packet Size:</strong> Intrusions display spike frequencies at specific packet size thresholds, corresponding to malicious payload signatures. Normal sessions exhibit a smoother, right-skewed distribution.
+    </p>
+</div>
+
+<div class="card-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 40px;">
+    <div class="card">
+        <h3 class="card-title">5. Receiver Operating Characteristic (ROC) Curve</h3>
+        <div class="visual-container">
+            <img src="{{ url_for('static', filename='images/roc_curve.png') }}" class="visual-image" alt="ROC Curve">
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            <strong>Insights:</strong> 
+            The ROC curve illustrates the diagnostic ability of our classifiers. 
+            - <strong>Gradient Boosting</strong> and <strong>Random Forest</strong> both show outstanding diagnostic power, achieving Area Under the Curve (AUC) scores of **~0.95+**.
+            - This high AUC indicates an extremely high true-positive rate with minimal false-positives across various decision thresholds.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">6. SHAP Feature Contribution Summary</h3>
+        <div class="visual-container">
+            <img src="{{ url_for('static', filename='images/shap_summary.png') }}" class="visual-image" alt="SHAP Summary Plot">
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            <strong>Insights:</strong>
+            SHAP (SHapley Additive exPlanations) values decompose predictions to explain feature impact:
+            - **High values of failed logins** (red dots) push the model heavily towards an attack prediction (positive SHAP).
+            - **Low values of IP reputation score** (blue dots) push the model towards detecting an intrusion.
+            - This explains not just *what* the model predicts, but *why* it predicts it, ensuring explainability (XAI) for cybersecurity audits.
+        </p>
+    </div>
+</div>
+{% endblock %}

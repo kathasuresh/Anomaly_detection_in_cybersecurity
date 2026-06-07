@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Cyber Threat Analyzer - Scan Results{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    <h1 class="section-title">Telemetry Scan Report</h1>
+    <p class="section-desc">Real-time classification result from the cyber threat detection engine.</p>
+    
+    {% if result == 'Cyber Attack Detected' %}
+        <div class="result-badge attack">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:10px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            Intrusion Detected
+        </div>
+    {% else %}
+        <div class="result-badge normal">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:10px;">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            Normal Session (Safe)
+        </div>
+    {% endif %}
+
+    <div class="card" style="text-align: left; margin-top: 30px; margin-bottom: 30px;">
+        <h3 class="card-title">Telemetry Log Scan Details</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+            The diagnostics scan was executed using the <strong>
+            {% if model_used == 'rf' %}Random Forest{% else %}Gradient Boosting{% endif %}
+            </strong> classification model.
+        </p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Parameter Column</th>
+                    <th>Scanned Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="feature-tag">network_packet_size</span></td>
+                    <td style="font-weight: 500;">{{ inputs.network_packet_size }} Bytes</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">protocol_type</span></td>
+                    <td style="font-weight: 500;">{{ inputs.protocol_type }}</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">login_attempts</span></td>
+                    <td style="font-weight: 500;">{{ inputs.login_attempts }}</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">session_duration</span></td>
+                    <td style="font-weight: 500;">{{ inputs.session_duration }} min</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">encryption_used</span></td>
+                    <td style="font-weight: 500;">{{ inputs.encryption_used }}</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">ip_reputation_score</span></td>
+                    <td style="font-weight: 500;">{{ inputs.ip_reputation_score }}</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">failed_logins</span></td>
+                    <td style="font-weight: 500;">{{ inputs.failed_logins }}</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">browser_type</span></td>
+                    <td style="font-weight: 500;">{{ inputs.browser_type }}</td>
+                </tr>
+                <tr>
+                    <td><span class="feature-tag">unusual_time_access</span></td>
+                    <td style="font-weight: 500;">
+                        {% if inputs.unusual_time_access == 1 %}Yes (Off-peak Hours){% else %}No (Standard Hours){% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <a href="/" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.05); color: var(--text-primary); text-decoration: none; padding: 12px 24px; border: 1px solid var(--border-color); border-radius: 8px; font-weight: 600; font-family: var(--font-heading); transition: var(--transition-smooth); width: 100%;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        Analyze New Log Session
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{
+    "dataset": {
+        "num_rows": 9537,
+        "num_cols": 11,
+        "columns": [
+            "session_id",
+            "network_packet_size",
+            "protocol_type",
+            "login_attempts",
+            "session_duration",
+            "encryption_used",
+            "ip_reputation_score",
+            "failed_logins",
+            "browser_type",
+            "unusual_time_access",
+            "attack_detected"
+        ],
+        "missing_values": {
+            "session_id": 0,
+            "network_packet_size": 0,
+            "protocol_type": 0,
+            "login_attempts": 0,
+            "session_duration": 0,
+            "encryption_used": 1966,
+            "ip_reputation_score": 0,
+            "failed_logins": 0,
+            "browser_type": 0,
+            "unusual_time_access": 0,
+            "attack_detected": 0
+        },
+        "normal_count": 5273,
+        "attack_count": 4264,
+        "features_description": {
+            "session_id": "Unique identifier for each user session",
+            "network_packet_size": "Size of the network packet transmitted in bytes",
+            "protocol_type": "Network protocol used (TCP, UDP, ICMP)",
+            "login_attempts": "Number of login attempts made during the session",
+            "session_duration": "Total duration of the session in minutes",
+            "encryption_used": "Type of encryption used for the session (AES, DES)",
+            "ip_reputation_score": "Reputation score of the client IP address (lower is more suspicious, range 0.0 - 1.0)",
+            "failed_logins": "Number of failed login attempts in the session",
+            "browser_type": "Type of browser used (Chrome, Firefox, Edge, Safari, Unknown)",
+            "unusual_time_access": "Flag indicating if the session occurred at an unusual time (0 for No, 1 for Yes)",
+            "failure_ratio": "Engineered feature: failed_logins / (login_attempts + 1)",
+            "login_risk_score": "Engineered feature: login_attempts * failed_logins",
+            "attack_detected": "Target label indicating if a cyber intrusion was detected (0 for Normal, 1 for Attack)"
+        }
+    },
+    "models": {
+        "random_forest": {
+            "name": "Random Forest Classifier",
+            "accuracy": 0.8930817610062893,
+            "precision": 0.9910979228486647,
+            "recall": 0.7713625866050808,
+            "f1_score": 0.8675324675324675,
+            "confusion_matrix": [
+                [
+                    1036,
+                    6
+                ],
+                [
+                    198,
+                    668
+                ]
+            ],
+            "hyperparameters": {
+                "n_estimators": 100,
+                "random_state": 42,
+                "criterion": "gini"
+            }
+        },
+        "gradient_boosting": {
+            "name": "Gradient Boosting Classifier",
+            "accuracy": 0.8972746331236897,
+            "precision": 1.0,
+            "recall": 0.7736720554272517,
+            "f1_score": 0.8723958333333334,
+            "confusion_matrix": [
+                [
+                    1042,
+                    0
+                ],
+                [
+                    196,
+                    670
+                ]
+            ],
+            "hyperparameters": {
+                "learning_rate": 0.1,
+                "n_estimators": 100,
+                "max_depth": 3,
+                "random_state": 42
+            }
+        }
+    }
+}

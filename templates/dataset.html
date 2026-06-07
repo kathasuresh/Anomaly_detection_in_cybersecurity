@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Cyber Threat Analyzer - Dataset Info{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="section-title">Cybersecurity Intrusion Dataset</h1>
+    <p class="section-desc">Statistical overview and attributes dictionary of the intrusion monitoring logs.</p>
+</div>
+
+<div class="card-grid">
+    <div class="card">
+        <h3 class="card-title" style="color: var(--color-accent);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:5px;">
+                <path d="M4 14h6v-4H4v4zm0 5h6v-4H4v4zM4 9h6V5H4v4zm10 5h6v-4h-6v4zm0 5h6v-4h-6v4zM14 5v4h6V5h-6z"/>
+            </svg>
+            Dataset Scale
+        </h3>
+        <div class="metric-row" style="grid-template-columns: 1fr 1fr; margin-bottom: 0; margin-top: 10px;">
+            <div class="metric-box">
+                <div class="metric-value">{{ metadata.dataset.num_rows }}</div>
+                <div class="metric-label">Total Records</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">{{ metadata.dataset.num_cols }}</div>
+                <div class="metric-label">Features</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title" style="color: var(--color-success);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:5px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            Target Distribution
+        </h3>
+        <div class="metric-row" style="grid-template-columns: 1fr 1fr; margin-bottom: 0; margin-top: 10px;">
+            <div class="metric-box" style="border-color: rgba(16, 185, 129, 0.2);">
+                <div class="metric-value" style="color: var(--color-success);">{{ metadata.dataset.normal_count }}</div>
+                <div class="metric-label">Normal (0)</div>
+            </div>
+            <div class="metric-box" style="border-color: rgba(244, 63, 94, 0.2);">
+                <div class="metric-value" style="color: var(--color-danger);">{{ metadata.dataset.attack_count }}</div>
+                <div class="metric-label">Attacks (1)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 40px;">
+    <h3 class="card-title">Missing Values & Data Imputation</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+        High data quality is maintained by inspecting missing fields before modeling. The table below represents null counts in raw telemetry logs.
+    </p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Feature Column</th>
+                <th>Null Count</th>
+                <th>Data Imputation Method</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feature, null_count in metadata.dataset.missing_values.items() %}
+            <tr>
+                <td><span class="feature-tag">{{ feature }}</span></td>
+                <td>
+                    {% if null_count > 0 %}
+                        <span style="color: var(--color-danger); font-weight: 600;">{{ null_count }}</span>
+                    {% else %}
+                        <span style="color: var(--text-muted);">0</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if null_count > 0 %}
+                        <span style="color: var(--color-accent); font-weight: 500;">Imputed using Mode (Most Frequent) value</span>
+                    {% else %}
+                        <span style="color: var(--text-muted); font-style: italic;">No Imputation required</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3 class="card-title">Attributes Dictionary</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+        Descriptions of telemetry columns used to classify normal and malicious web sessions.
+    </p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Attribute</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for col, desc in metadata.dataset.features_description.items() %}
+            <tr>
+                <td><span class="feature-tag">{{ col }}</span></td>
+                <td>
+                    {% if col in ['protocol_type', 'encryption_used', 'browser_type'] %}
+                        <span style="color: #c084fc;">Categorical (Encoded)</span>
+                    {% elif col in ['attack_detected', 'unusual_time_access'] %}
+                        <span style="color: #6ee7b7;">Binary (0 / 1)</span>
+                    {% else %}
+                        <span style="color: #60a5fa;">Numerical</span>
+                    {% endif %}
+                </td>
+                <td style="color: var(--text-muted); font-size: 0.9rem;">{{ desc }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

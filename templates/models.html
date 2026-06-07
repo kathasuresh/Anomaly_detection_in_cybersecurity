@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Cyber Threat Analyzer - Models Comparison{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="section-title">Detection Engines & Models</h1>
+    <p class="section-desc">Comparison of machine learning classifiers evaluated on the test partition.</p>
+</div>
+
+<div class="card-grid">
+    <!-- Random Forest -->
+    <div class="card">
+        <h3 class="card-title" style="color: var(--color-primary);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:5px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+            </svg>
+            Random Forest Classifier
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">
+            An ensemble bagging classifier constructing numerous decision trees during training. It averages predictions to mitigate overfitting.
+        </p>
+
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase;">Performance Metrics</h4>
+        <div class="metric-row" style="grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div class="metric-box">
+                <div class="metric-value">{{ "%.2f"|format(metadata.models.random_forest.accuracy * 100) }}%</div>
+                <div class="metric-label">Accuracy</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">{{ "%.2f"|format(metadata.models.random_forest.precision * 100) }}%</div>
+                <div class="metric-label">Precision</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">{{ "%.2f"|format(metadata.models.random_forest.recall * 100) }}%</div>
+                <div class="metric-label">Recall</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">{{ "%.2f"|format(metadata.models.random_forest.f1_score * 100) }}%</div>
+                <div class="metric-label">F1-Score</div>
+            </div>
+        </div>
+
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; text-align: center;">Confusion Matrix</h4>
+        <table class="cm-table">
+            <tr>
+                <td></td>
+                <td class="cm-label-x">Predicted Normal</td>
+                <td class="cm-label-x">Predicted Attack</td>
+            </tr>
+            <tr>
+                <td class="cm-label-y">True Normal</td>
+                <td class="cm-cell cm-true-neg">{{ metadata.models.random_forest.confusion_matrix[0][0] }}<br><small style="font-size:0.65rem; opacity:0.8;">TN</small></td>
+                <td class="cm-cell cm-false-pos">{{ metadata.models.random_forest.confusion_matrix[0][1] }}<br><small style="font-size:0.65rem; opacity:0.8;">FP</small></td>
+            </tr>
+            <tr>
+                <td class="cm-label-y">True Attack</td>
+                <td class="cm-cell cm-false-neg">{{ metadata.models.random_forest.confusion_matrix[1][0] }}<br><small style="font-size:0.65rem; opacity:0.8;">FN</small></td>
+                <td class="cm-cell cm-true-pos">{{ metadata.models.random_forest.confusion_matrix[1][1] }}<br><small style="font-size:0.65rem; opacity:0.8;">TP</small></td>
+            </tr>
+        </table>
+        
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-top: 25px; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase;">Hyperparameters</h4>
+        <table>
+            <tbody>
+                {% for param, val in metadata.models.random_forest.hyperparameters.items() %}
+                <tr>
+                    <td style="font-family: monospace; font-size: 0.85rem; padding: 8px 12px;">{{ param }}</td>
+                    <td style="color: var(--color-accent); font-weight: 600; font-size: 0.85rem; padding: 8px 12px;">{{ val }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Gradient Boosting -->
+    <div class="card">
+        <h3 class="card-title" style="color: var(--color-success);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:5px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            Gradient Boosting Classifier
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">
+            A boosting ensemble classifier building weak trees sequentially. Each new tree corrects errors made by prior estimators.
+        </p>
+
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase;">Performance Metrics</h4>
+        <div class="metric-row" style="grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div class="metric-box">
+                <div class="metric-value" style="color: var(--color-success);">{{ "%.2f"|format(metadata.models.gradient_boosting.accuracy * 100) }}%</div>
+                <div class="metric-label">Accuracy</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value" style="color: var(--color-success);">{{ "%.2f"|format(metadata.models.gradient_boosting.precision * 100) }}%</div>
+                <div class="metric-label">Precision</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value" style="color: var(--color-success);">{{ "%.2f"|format(metadata.models.gradient_boosting.recall * 100) }}%</div>
+                <div class="metric-label">Recall</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value" style="color: var(--color-success);">{{ "%.2f"|format(metadata.models.gradient_boosting.f1_score * 100) }}%</div>
+                <div class="metric-label">F1-Score</div>
+            </div>
+        </div>
+
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; text-align: center;">Confusion Matrix</h4>
+        <table class="cm-table">
+            <tr>
+                <td></td>
+                <td class="cm-label-x">Predicted Normal</td>
+                <td class="cm-label-x">Predicted Attack</td>
+            </tr>
+            <tr>
+                <td class="cm-label-y">True Normal</td>
+                <td class="cm-cell cm-true-neg">{{ metadata.models.gradient_boosting.confusion_matrix[0][0] }}<br><small style="font-size:0.65rem; opacity:0.8;">TN</small></td>
+                <td class="cm-cell cm-false-pos">{{ metadata.models.gradient_boosting.confusion_matrix[0][1] }}<br><small style="font-size:0.65rem; opacity:0.8;">FP</small></td>
+            </tr>
+            <tr>
+                <td class="cm-label-y">True Attack</td>
+                <td class="cm-cell cm-false-neg">{{ metadata.models.gradient_boosting.confusion_matrix[1][0] }}<br><small style="font-size:0.65rem; opacity:0.8;">FN</small></td>
+                <td class="cm-cell cm-true-pos">{{ metadata.models.gradient_boosting.confusion_matrix[1][1] }}<br><small style="font-size:0.65rem; opacity:0.8;">TP</small></td>
+            </tr>
+        </table>
+
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; margin-top: 25px; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase;">Hyperparameters</h4>
+        <table>
+            <tbody>
+                {% for param, val in metadata.models.gradient_boosting.hyperparameters.items() %}
+                <tr>
+                    <td style="font-family: monospace; font-size: 0.85rem; padding: 8px 12px;">{{ param }}</td>
+                    <td style="color: var(--color-success); font-weight: 600; font-size: 0.85rem; padding: 8px 12px;">{{ val }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h3 class="card-title">Feature Importances Comparison</h3>
+    <div class="visual-container" style="background: rgba(15, 23, 42, 0.2);">
+        <img src="{{ url_for('static', filename='images/feature_importance.png') }}" class="visual-image" alt="Feature Importance Matrix" style="max-height: 420px; width: auto;">
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+        <strong>Insights:</strong> 
+        - Both models rank the engineered features <strong>failed logins</strong> and <strong>login attempts</strong> as highly influential variables.
+        - The engineered feature <strong>login_risk_score</strong> provides significant predictive split-power for the Random Forest model.
+        - For the Gradient Boosting model, <strong>ip_reputation_score</strong> and <strong>failed_logins</strong> act as primary split drivers, whereas categorical variables such as browser type and protocol show lower raw importance weight, acting as context layers.
+    </p>
+</div>
+{% endblock %}

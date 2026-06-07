@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cyber Intrusion Detection{% endblock %}</title>
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo-link">
+                <div class="logo-icon">
+                    <!-- Modern security shield SVG -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">CyberGuard AI</span>
+            </a>
+            
+            <nav id="navbar">
+                <a href="/" class="nav-link {% if page == 'predict' %}active{% endif %}" id="nav-predict">Predictor</a>
+                <a href="/dataset" class="nav-link {% if page == 'dataset' %}active{% endif %}" id="nav-dataset">Dataset Info</a>
+                <a href="/eda" class="nav-link {% if page == 'eda' %}active{% endif %}" id="nav-eda">Visual EDA</a>
+                <a href="/models" class="nav-link {% if page == 'models' %}active{% endif %}" id="nav-models">Models Comparison</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CyberGuard AI - Advanced Intrusion Detection System. Designed with Premium Analytics.</p>
+    </footer>
+
+</body>
+</html>
