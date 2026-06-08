@@ -1,0 +1,5 @@
+# Exclude heavy local data that isn’t needed for deployment
+.git/
+.dataset/
+notebooks/
+# If you have any additional large raw data files, list them here
